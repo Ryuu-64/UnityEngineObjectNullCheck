@@ -1,35 +1,45 @@
 using System.Collections;
+using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Script
 {
     public class UniyEngineObjectNullCheck : MonoBehaviour
     {
         public GameObject go;
+        public Text textUi;
 
         private void Start() => StartCoroutine(NullCheckTest());
 
         private IEnumerator NullCheckTest()
         {
-            WaitForSeconds waitTime = new WaitForSeconds(1);
+            var stringBuilder = new StringBuilder();
+            WaitForSeconds waitTime = new WaitForSeconds(2);
             yield return waitTime;
-            Debug.Log("go not set");
-            Debug.Log($"Reference Equals null: {ReferenceEquals(go, null).ToString()}");
-            Debug.Log($"UnityEngine Object null: {(go == null).ToString()}");
-            go = GameObject.Find("NullTest");
-            Debug.Log($"go set");
-            Debug.Log($"Reference Equals null: {ReferenceEquals(go, null).ToString()}");
-            Debug.Log($"UnityEngine Object null: {(go == null).ToString()}");
+#if UNITY_EDITOR
+            stringBuilder.Append("UNITY EDITOR").Append("\n");
+#else
+            stringBuilder.Append("BUILD").Append("\n");
+#endif
+            stringBuilder.Append("go not set").Append("\n");
+            stringBuilder.Append($"Reference Equals null: {ReferenceEquals(go, null).ToString()}").Append("\n");
+            stringBuilder.Append($"UnityEngine Object null: {(go == null).ToString()}").Append("\n");
+            stringBuilder.Append("go set").Append("\n");
+            go = GameObject.Find("GoForNullTest");
+            stringBuilder.Append($"Reference Equals null: {ReferenceEquals(go, null).ToString()}").Append("\n");
+            stringBuilder.Append($"UnityEngine Object null: {(go == null).ToString()}").Append("\n");
+            stringBuilder.Append("Destroy(go)").Append("\n");
             Destroy(go);
             // Destroy is not execute immediately, wait for it.
             yield return waitTime;
-            Debug.Log("Destroy(go)");
-            Debug.Log($"Reference Equals null: {ReferenceEquals(go, null).ToString()}");
-            Debug.Log($"UnityEngine Object null: {(go == null).ToString()}");
+            stringBuilder.Append($"Reference Equals null: {ReferenceEquals(go, null).ToString()}").Append("\n");
+            stringBuilder.Append($"UnityEngine Object null: {(go == null).ToString()}").Append("\n");
             go = null;
-            Debug.Log("go null");
-            Debug.Log($"Reference Equals null: {ReferenceEquals(go, null).ToString()}");
-            Debug.Log($"UnityEngine Object null: {(go == null).ToString()}");
+            stringBuilder.Append("go null").Append("\n");
+            stringBuilder.Append($"Reference Equals null: {ReferenceEquals(go, null).ToString()}").Append("\n");
+            stringBuilder.Append($"UnityEngine Object null: {(go == null).ToString()}").Append("\n");
+            textUi.text = stringBuilder.ToString();
         }
     }
 }
